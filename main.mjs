@@ -56,7 +56,7 @@ const renderPoints = () => {
 const renderRoute = () => {
   const route = getRoute(points);
 
-  bestCost.textContent = `${calcCost(route)}`;
+  bestCost.textContent = `${calcCost(points, route)}`;
 
   rtCtx.clearRect(0, 0, width, height);
 
@@ -65,7 +65,8 @@ const renderRoute = () => {
   rtCtx.moveTo(scaleX(route[0].x), scaleY(route[0].y));
   rtCtx.beginPath();
 
-  route.forEach(({ x, y }) => {
+  route.forEach(i => {
+    const { x, y } = points[i];
     rtCtx.lineTo(scaleX(x), scaleY(y));
   });
 

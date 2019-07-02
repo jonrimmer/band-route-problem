@@ -2,9 +2,9 @@ import { calcDistance } from './route.mjs';
 
 export const getRoute = points => {
   let current = points[0];
-  const result = [current];
+  const result = [0];
 
-  const unvisited = points.slice(1);
+  const unvisited = Array.from({ length: points.length }, (_, i) => i);
 
   while (unvisited.length > 0) {
     let nearestIndex = -1;
@@ -12,7 +12,8 @@ export const getRoute = points => {
 
     // Find the nearest unvisited point.
     for (let i = 0; i < unvisited.length; i++) {
-      const distance = calcDistance(current, unvisited[i]);
+      const candidate = points[unvisited[i]];
+      const distance = calcDistance(current, candidate);
 
       if (distance < nearestDistance) {
         nearestDistance = distance;
@@ -20,13 +21,15 @@ export const getRoute = points => {
       }
     }
 
-    current = unvisited[nearestIndex];
-    result.push(current);
+    const nearestPoint = unvisited[nearestIndex];
+
+    current = points[nearestPoint];
+    result.push(nearestPoint);
     unvisited.splice(nearestIndex, 1);
   }
 
   // Return to start.
-  result.push(points[0]);
+  result.push(0);
 
   return result;
 };

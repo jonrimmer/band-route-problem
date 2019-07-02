@@ -12,12 +12,15 @@ export const calcDistance = ({ x: ax, y: ay }, { x: bx, y: by }) =>
  *
  * @param route
  */
-export const calcCost = route =>
+export const calcCost = (points, route) =>
   Math.round(
     route.reduce(
-      (acc, point, i) =>
+      (acc, p, i) =>
         acc +
-        calcDistance(point, i === 0 ? route[route.length - 1] : route[i - 1]),
+        calcDistance(
+          points[p],
+          i === 0 ? points[route[route.length - 1]] : points[route[i - 1]]
+        ),
       0
     )
   );
