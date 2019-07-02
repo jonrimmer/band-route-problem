@@ -1,12 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <style>
-      *, *::before, *::after {
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
       }
 
-      html, body {
+      html,
+      body {
         margin: 0;
         padding: 0;
         height: 100%;
@@ -18,14 +21,13 @@
         display: grid;
         grid-template-rows: 1fr;
         grid-template-columns: 80% 20%;
-        grid-template-areas: "render control";
+        grid-template-areas: 'render control';
         grid-gap: 20px;
       }
 
       canvas {
         grid-area: render;
         place-self: stretch;
-
       }
 
       .control {
@@ -37,9 +39,7 @@
     <canvas id="points"></canvas>
     <canvas id="route"></canvas>
     <div class="control">
-      <p>
-        Best route cost: <span id="bestCost"></span>
-      </p>
+      <p>Best route cost: <span id="bestCost"></span></p>
     </div>
 
     <script id="pointsData" type="text/json">

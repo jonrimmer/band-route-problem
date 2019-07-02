@@ -1,6 +1,6 @@
 import { calcDistance } from './route.mjs';
 
-export const getRoute = (points) => {
+export const getRoute = points => {
   let current = points[0];
   const result = [current];
 
@@ -29,4 +29,4 @@ export const getRoute = (points) => {
   result.push(points[0]);
 
   return result;
-}
+};
