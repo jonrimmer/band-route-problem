@@ -1,10 +1,14 @@
 
+import { getRoute } from './nearest-neighbor.mjs';
+import { calcCost } from './route.mjs';
+
 const pointsCanvas = document.getElementById('points');
 const routeCanvas = document.getElementById('route');
+const bestCost = document.getElementById('bestCost');
+
 const ptsCtx = pointsCanvas.getContext('2d');
 const rtCtx = routeCanvas.getContext('2d');
 
-let renderHeight;
 let width = 0;
 let height = 0;
 
@@ -15,6 +19,9 @@ let points;
 
 const POINT_RADIUS = 3;
 const POINT_STYLE = 'lightgray';
+const HOME_STYLE = 'blue';
+
+const LINE_STYLE = 'green';
 
 const setPoints = (pts) => {
   points = pts
@@ -39,9 +46,8 @@ const setPoints = (pts) => {
 const renderPoints = () => {
   ptsCtx.clearRect(0, 0, width, height);
 
-  ptsCtx.fillStyle = POINT_STYLE;
-
-  points.forEach(({x, y}) => {
+  points.forEach(({x, y}, i) => {
+  ptsCtx.fillStyle = i == 0 ? HOME_STYLE : POINT_STYLE;
     ptsCtx.beginPath();
     ptsCtx.arc(scaleX(x), scaleY(y), POINT_RADIUS, 0, 2 * Math.PI, false);
     ptsCtx.fill();
@@ -49,7 +55,25 @@ const renderPoints = () => {
 }
 
 const renderRoute = () => {
+  const route = getRoute(points);
+
+  bestCost.textContent = `${calcCost(route)}`;
+
+  rtCtx.clearRect(0, 0, width, height);
   
+  rtCtx.strokeStyle = LINE_STYLE;
+
+  rtCtx.moveTo(scaleX(route[0].x), scaleY(route[0].y));
+  rtCtx.beginPath();
+
+  route.forEach(({x, y}) => {
+    rtCtx.lineTo(
+      scaleX(x),
+      scaleY(y)
+    );
+  });
+
+  rtCtx.stroke();
 }
 
 const render = () => {

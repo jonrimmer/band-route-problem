@@ -13,6 +13,7 @@
       }
 
       body {
+        font-family: sans-serif;
         padding: 20px;
         display: grid;
         grid-template-rows: 1fr;
@@ -36,7 +37,9 @@
     <canvas id="points"></canvas>
     <canvas id="route"></canvas>
     <div class="control">
-
+      <p>
+        Best route cost: <span id="bestCost"></span>
+      </p>
     </div>
 
     <script id="pointsData" type="text/json">
