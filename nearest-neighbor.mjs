@@ -1,35 +1,56 @@
-import { calcDistance } from './route.mjs';
+import { calcDistance, calcCost } from './route.mjs';
 
 export const getRoute = points => {
-  let current = points[0];
-  const result = [0];
+  let bestCost = Number.POSITIVE_INFINITY;
+  let bestRoute = null;
 
-  const unvisited = Array.from({ length: points.length }, (_, i) => i);
+  // We run the NN repeatedly, trying each point as the "starting point".
+  for (let startIndex = 0; startIndex < points.length; startIndex++) {
+    let current = points[startIndex];
+    let route = [startIndex];
+    const unvisited = Array.from({ length: points.length }, (_, i) => i);
 
-  while (unvisited.length > 0) {
-    let nearestIndex = -1;
-    let nearestDistance = Number.POSITIVE_INFINITY;
+    // Remove the start point.
+    unvisited.splice(startIndex, 1);
 
-    // Find the nearest unvisited point.
-    for (let i = 0; i < unvisited.length; i++) {
-      const candidate = points[unvisited[i]];
-      const distance = calcDistance(current, candidate);
+    while (unvisited.length > 0) {
+      let nearestIndex = -1;
+      let nearestDistance = Number.POSITIVE_INFINITY;
 
-      if (distance < nearestDistance) {
-        nearestDistance = distance;
-        nearestIndex = i;
+      // Find the nearest unvisited point.
+      for (let i = 0; i < unvisited.length; i++) {
+        const candidate = points[unvisited[i]];
+        const distance = calcDistance(current, candidate);
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestIndex = i;
+        }
       }
+
+      const nearestPoint = unvisited[nearestIndex];
+
+      current = points[nearestPoint];
+      route.push(nearestPoint);
+      unvisited.splice(nearestIndex, 1);
     }
 
-    const nearestPoint = unvisited[nearestIndex];
+    // Return to the start
 
-    current = points[nearestPoint];
-    result.push(nearestPoint);
-    unvisited.splice(nearestIndex, 1);
+    const cost = calcCost(points, route);
+
+    if (cost < bestCost) {
+      console.debug(`Starting at ${startIndex}. Cost ${cost} beat ${bestCost}`);
+      bestCost = cost;
+      bestRoute = route;
+    } else {
+      console.debug(
+        `Starting at ${startIndex}. Cost ${cost} didn't beat ${bestCost}`
+      );
+    }
   }
 
-  // Return to start.
-  result.push(0);
-
-  return result;
+  // Reformulate the route to put the real home point first.
+  const homeIndex = bestRoute.indexOf(0);
+  return bestRoute.slice(homeIndex).concat(bestRoute.slice(0, homeIndex));
 };

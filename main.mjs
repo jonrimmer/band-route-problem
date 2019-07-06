@@ -54,7 +54,7 @@ const renderPoints = () => {
 };
 
 const renderRoute = () => {
-  const route = getRoute(points);
+  const route = getRoute(points, true);
 
   bestCost.textContent = `${calcCost(points, route)}`;
 
@@ -62,7 +62,11 @@ const renderRoute = () => {
 
   rtCtx.strokeStyle = LINE_STYLE;
 
-  rtCtx.moveTo(scaleX(route[0].x), scaleY(route[0].y));
+  // Home
+  const { x: ox, y: oy } = points[0];
+
+  // Start at home
+  rtCtx.moveTo(scaleX(ox), scaleY(oy));
   rtCtx.beginPath();
 
   route.forEach(i => {
@@ -70,6 +74,8 @@ const renderRoute = () => {
     rtCtx.lineTo(scaleX(x), scaleY(y));
   });
 
+  // Return home
+  rtCtx.lineTo(scaleX(ox), scaleY(oy));
   rtCtx.stroke();
 };
 
@@ -87,7 +93,7 @@ const resize = () => {
   render();
 };
 
-setPoints(JSON.parse(document.getElementById('pointsData').textContent.trim()));
+setPoints(JSON.parse(document.getElementById('points400').textContent.trim()));
 
 requestAnimationFrame(resize);
 
