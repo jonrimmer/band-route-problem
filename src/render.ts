@@ -1,4 +1,4 @@
-import { Point } from './route.js';
+import { Point } from './model.js';
 
 export const pointsToSvg = (points: Point[]) => {
   return points

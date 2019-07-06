@@ -1,4 +1,5 @@
-import { calcDistance, calcCost, Point } from './route.js';
+import { calcDistance, calcCost } from './route.js';
+import { Point, Result } from './model.js';
 
 /**
  * Use NN heuristic to construct a route, starting from a given index.
@@ -41,13 +42,29 @@ export const getRouteFromIndex = (points: Point[], startIndex: number) => {
 };
 
 /**
- * Apply the NN heuristic to a set of points, starting at each point
+ * Simple nearest-neighbor, starting from the home point.
+ *
+ * @param points Points to visit
+ * @returns Iterable iterator of a single route result.
+ */
+export function* nnSimple(points: Point[]): IterableIterator<Result> {
+  const route = getRouteFromIndex(points, 0);
+
+  yield {
+    route,
+    bestCost: calcCost(points, route),
+    stats: {}
+  };
+}
+
+/**
+ * Apply the nearest-neighbor heuristic to a set of points, starting at each point
  * in turn, to find the best route.
  *
  * @param points Points to visit
- * @returns The fastest route found via NN
+ * @returns Iterable iterator of route results.
  */
-export const getRoute = (points: Point[]) => {
+export function* nnExhaustive(points: Point[]): IterableIterator<Result> {
   let bestCost = Number.POSITIVE_INFINITY;
   let bestRoute: number[] = [];
 
@@ -55,6 +72,15 @@ export const getRoute = (points: Point[]) => {
   for (let startIndex = 0; startIndex < points.length; startIndex++) {
     const route = getRouteFromIndex(points, startIndex);
     const cost = calcCost(points, route);
+
+    yield {
+      route: route,
+      bestCost,
+      stats: {
+        startIndex,
+        max: points.length
+      }
+    };
 
     if (cost < bestCost) {
       console.debug(`Starting at ${startIndex}. Cost ${cost} beat ${bestCost}`);
@@ -69,5 +95,9 @@ export const getRoute = (points: Point[]) => {
 
   // Reformulate the route to put the real home point first.
   const homeIndex = bestRoute.indexOf(0);
-  return bestRoute.slice(homeIndex).concat(bestRoute.slice(0, homeIndex));
-};
+  yield {
+    bestCost,
+    route: bestRoute.slice(homeIndex).concat(bestRoute.slice(0, homeIndex)),
+    stats: {}
+  };
+}

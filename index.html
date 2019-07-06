@@ -63,8 +63,13 @@
         margin-bottom: 8px;
       }
 
+      button,
       select {
         font-size: var(--font-size);
+      }
+
+      .stats {
+        white-space: pre;
       }
     </style>
   </head>
@@ -79,8 +84,23 @@
         <option>/data/points200.json</option>
         <option>/data/points400.json</option>
       </select>
+
+      <label>Method:</label>
+      <select id="method">
+        <option>Nearest Neighbor</option>
+        <option>Exhaustive Nearest Neighbor</option>
+        <option>Simulated Annealing</option>
+      </select>
+
+      <div>
+        <button type="button" id="run">Run</button>
+      </div>
+
       <label>Best route cost:</label>
       <span id="bestCost"></span>
+
+      <label>Stats:</label>
+      <div id="stats"></div>
     </div>
 
     <script type="module" src="build/main.js"></script>
