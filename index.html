@@ -20,14 +20,27 @@
         padding: 20px;
         display: grid;
         grid-template-rows: 1fr;
-        grid-template-columns: 80% 20%;
+        grid-template-columns: 2fr 1fr;
         grid-template-areas: 'render control';
         grid-gap: 20px;
       }
 
-      canvas {
+      .point {
+        fill: rgb(74, 143, 18);
+      }
+
+      .start {
+        fill: blue;
+      }
+
+      .link {
+        stroke: black;
+        stroke-width: 2;
+      }
+
+      .render {
         grid-area: render;
-        place-self: stretch;
+        place-self: center stretch;
       }
 
       .control {
@@ -36,8 +49,9 @@
     </style>
   </head>
   <body>
-    <canvas id="points"></canvas>
-    <canvas id="route"></canvas>
+    <svg class="render" id="route" preserveAspectRatio="xMidYMax meet"></svg>
+    <svg class="render" id="points" preserveAspectRatio="xMidYMax meet"></svg>
+
     <div class="control">
       <p>Best route cost: <span id="bestCost"></span></p>
     </div>
