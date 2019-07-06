@@ -6,7 +6,8 @@ export interface Point {
 export enum Method {
   NearestNeighbor = 'Nearest Neighbor',
   ExhaustiveNearestNeighbor = 'Exhaustive Nearest Neighbor',
-  SimulatedAnnealing = 'Simulated Annealing'
+  SimulatedAnnealing = 'Simulated Annealing',
+  Genetic = 'Genetic'
 }
 
 export interface Result {

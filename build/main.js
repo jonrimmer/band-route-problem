@@ -4,6 +4,7 @@ import { Method } from './model.js';
 import { nnSimple, nnExhaustive } from './nearest-neighbor.js';
 import { simulatedAnnealing } from './simulated-annealing.js';
 import { routeToSvg } from './render.js';
+import { genetic } from './genetic.js';
 selectData.addEventListener('change', async () => {
     await loadPoints(selectData.value);
     renderPoints();
@@ -33,6 +34,9 @@ export const setMethod = (method) => {
         case Method.SimulatedAnnealing:
             getRoute = simulatedAnnealing;
             break;
+        case Method.Genetic:
+            getRoute = genetic;
+            break;
     }
 };
 let running = false;
@@ -50,11 +54,20 @@ export const renderRoute = () => {
     running = true;
     runBtn.innerText = 'Stop';
     const renderFrame = () => {
-        const curr = iterator.next();
-        if (curr.value) {
-            bestCost.textContent = `${curr.value.bestCost}`;
-            routeSvg.innerHTML = routeToSvg(points.data, curr.value.route);
-            stats.innerText = Object.entries(curr.value.stats)
+        let mark = Date.now();
+        let result = null;
+        let curr;
+        // Render at approximately 60fps:
+        do {
+            curr = iterator.next();
+            if (curr.value) {
+                result = curr.value;
+            }
+        } while (Date.now() - mark < 62 && !curr.done);
+        if (result) {
+            bestCost.textContent = `${result.bestCost}`;
+            routeSvg.innerHTML = routeToSvg(points.data, result.route);
+            stats.innerText = Object.entries(result.stats)
                 .map(([key, value]) => `${key}: ${value}`)
                 .join('\n');
         }

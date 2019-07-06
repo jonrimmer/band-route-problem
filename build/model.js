@@ -3,4 +3,5 @@ export var Method;
     Method["NearestNeighbor"] = "Nearest Neighbor";
     Method["ExhaustiveNearestNeighbor"] = "Exhaustive Nearest Neighbor";
     Method["SimulatedAnnealing"] = "Simulated Annealing";
+    Method["Genetic"] = "Genetic";
 })(Method || (Method = {}));
