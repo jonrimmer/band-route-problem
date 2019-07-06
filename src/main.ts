@@ -1,20 +1,20 @@
-import { getRoute } from './nearest-neighbor.mjs';
-import { calcCost } from './route.mjs';
+import { getRoute } from './nearest-neighbor.js';
+import { calcCost, Point } from './route.js';
 
-const pointsCanvas = document.getElementById('points');
-const routeCanvas = document.getElementById('route');
-const bestCost = document.getElementById('bestCost');
+const pointsCanvas = document.getElementById('points') as HTMLCanvasElement;
+const routeCanvas = document.getElementById('route') as HTMLCanvasElement;
+const bestCost = document.getElementById('bestCost') as HTMLSpanElement;
 
-const ptsCtx = pointsCanvas.getContext('2d');
-const rtCtx = routeCanvas.getContext('2d');
+const ptsCtx = pointsCanvas.getContext('2d')!;
+const rtCtx = routeCanvas.getContext('2d')!;
 
 let width = 0;
 let height = 0;
 
-let scaleX;
-let scaleY;
+let scaleX: (v: number) => number;
+let scaleY: (v: number) => number;
 
-let points;
+let points: Point[];
 
 const POINT_RADIUS = 3;
 const POINT_STYLE = 'lightgray';
@@ -22,7 +22,7 @@ const HOME_STYLE = 'blue';
 
 const LINE_STYLE = 'green';
 
-const setPoints = pts => {
+const setPoints = (pts: Point[]) => {
   points = pts;
   let maxX = 0;
   let maxY = 0;
@@ -54,7 +54,7 @@ const renderPoints = () => {
 };
 
 const renderRoute = () => {
-  const route = getRoute(points, true);
+  const route = getRoute(points);
 
   bestCost.textContent = `${calcCost(points, route)}`;
 
@@ -93,7 +93,8 @@ const resize = () => {
   render();
 };
 
-setPoints(JSON.parse(document.getElementById('points400').textContent.trim()));
+const pointsData = document.getElementById('points400') as HTMLScriptElement;
+setPoints(JSON.parse((pointsData.textContent || '[]').trim()));
 
 requestAnimationFrame(resize);
 

@@ -1,8 +1,8 @@
-import { calcDistance, calcCost } from './route.mjs';
+import { calcDistance, calcCost, Point } from './route.js';
 
-export const getRoute = points => {
+export const getRoute = (points: Point[]) => {
   let bestCost = Number.POSITIVE_INFINITY;
-  let bestRoute = null;
+  let bestRoute: number[] = [];
 
   // We run the NN repeatedly, trying each point as the "starting point".
   for (let startIndex = 0; startIndex < points.length; startIndex++) {

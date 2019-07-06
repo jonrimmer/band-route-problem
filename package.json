@@ -8,13 +8,17 @@
     "url": "git+https://github.com/jonrimmer/band-route-problem.git"
   },
   "scripts": {
-    "start": "http-server"
+    "start": "http-server",
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "npm run start & npm run watch"
   },
   "keywords": [],
   "author": "",
   "license": "UNLICENSED",
   "homepage": "https://github.com/jonrimmer/band-route-problem#readme",
   "devDependencies": {
-    "http-server": "^0.11.1"
+    "http-server": "^0.11.1",
+    "typescript": "^3.5.2"
   }
 }
