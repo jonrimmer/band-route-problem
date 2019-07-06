@@ -1,10 +1,7 @@
 import { getRoute } from './nearest-neighbor.js';
 import { calcCost } from './route.js';
 import { pointsToSvg, routeToSvg } from './render.js';
-//TS types are wrong: https://github.com/microsoft/TypeScript/issues/4689
-const pointsSvg = document.getElementById('points');
-const routeSvg = document.getElementById('route');
-const bestCost = document.getElementById('bestCost');
+import { routeSvg, pointsSvg, bestCost, selectData } from './ui.js';
 let points;
 const POINT_RADIUS = 3;
 const POINT_STYLE = 'lightgray';
@@ -31,10 +28,11 @@ const setPoints = (pts) => {
     maxY += 2 * (height * pad);
     routeSvg.setAttribute('viewBox', `${minX} ${minY} ${maxX} ${maxY}`);
     pointsSvg.setAttribute('viewBox', `${minX} ${minY} ${maxX} ${maxY}`);
+    requestAnimationFrame(() => {
+        render();
+    });
 };
-const renderPoints = () => {
-    pointsSvg.innerHTML = pointsToSvg(points);
-};
+const renderPoints = () => { };
 const renderRoute = () => {
     const route = getRoute(points);
     bestCost.textContent = `${calcCost(points, route)}`;
@@ -44,6 +42,17 @@ const render = () => {
     renderPoints();
     renderRoute();
 };
+const renderer = {
+    renderRoute(route) {
+        pointsSvg.innerHTML = pointsToSvg(points);
+    }
+};
 const pointsData = document.getElementById('points200');
-setPoints(JSON.parse((pointsData.textContent || '[]').trim()));
-requestAnimationFrame(render);
+const loadPoints = async (path) => {
+    const pointsJSON = await fetch(path).then(r => r.json());
+    setPoints(pointsJSON);
+};
+selectData.addEventListener('change', () => {
+    loadPoints(selectData.value);
+});
+loadPoints(selectData.value);

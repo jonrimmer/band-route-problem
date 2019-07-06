@@ -1,14 +1,7 @@
 import { getRoute } from './nearest-neighbor.js';
 import { calcCost, Point } from './route.js';
 import { pointsToSvg, routeToSvg } from './render.js';
-
-//TS types are wrong: https://github.com/microsoft/TypeScript/issues/4689
-const pointsSvg = (document.getElementById(
-  'points'
-) as unknown) as SVGSVGElement;
-const routeSvg = (document.getElementById('route') as unknown) as SVGGElement;
-
-const bestCost = document.getElementById('bestCost') as HTMLSpanElement;
+import { routeSvg, pointsSvg, bestCost, selectData } from './ui.js';
 
 let points: Point[];
 
@@ -43,11 +36,13 @@ const setPoints = (pts: Point[]) => {
 
   routeSvg.setAttribute('viewBox', `${minX} ${minY} ${maxX} ${maxY}`);
   pointsSvg.setAttribute('viewBox', `${minX} ${minY} ${maxX} ${maxY}`);
+
+  requestAnimationFrame(() => {
+    render();
+  });
 };
 
-const renderPoints = () => {
-  pointsSvg.innerHTML = pointsToSvg(points);
-};
+const renderPoints = () => {};
 
 const renderRoute = () => {
   const route = getRoute(points);
@@ -62,7 +57,21 @@ const render = () => {
   renderRoute();
 };
 
-const pointsData = document.getElementById('points200') as HTMLScriptElement;
-setPoints(JSON.parse((pointsData.textContent || '[]').trim()));
+const renderer = {
+  renderRoute(route: number[]) {
+    pointsSvg.innerHTML = pointsToSvg(points);
+  }
+};
 
-requestAnimationFrame(render);
+const pointsData = document.getElementById('points200') as HTMLScriptElement;
+
+const loadPoints = async (path: string) => {
+  const pointsJSON: Point[] = await fetch(path).then(r => r.json());
+  setPoints(pointsJSON);
+};
+
+selectData.addEventListener('change', () => {
+  loadPoints(selectData.value);
+});
+
+loadPoints(selectData.value);
