@@ -1,5 +1,5 @@
-import { getRouteFromIndex } from './nearest-neighbor';
-import { Point } from './model';
+import { getRouteFromIndex } from './nearest-neighbor.js';
+import { Point } from './model.js';
 
 const POINTS: Point[] = require('../data/points40.json');
 

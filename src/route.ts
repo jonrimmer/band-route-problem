@@ -1,9 +1,4 @@
-import { Point, Method, RouteGenerator } from './model.js';
-import { simulatedAnnealing } from './simulated-annealing.js';
-import { nnSimple, nnExhaustive } from './nearest-neighbor.js';
-import { points } from './points.js';
-import { bestCost, routeSvg, stats, runBtn } from './ui.js';
-import { routeToSvg } from './render.js';
+import { Point } from './model.js';
 
 /**
  * Calculate the Euclidian distance between two points.
@@ -33,65 +28,3 @@ export const calcCost = (points: Point[], route: number[]) =>
       0
     )
   );
-
-let getRoute: RouteGenerator;
-
-export const setMethod = (method: Method) => {
-  switch (method) {
-    case Method.NearestNeighbor:
-      getRoute = nnSimple;
-      break;
-    case Method.ExhaustiveNearestNeighbor:
-      getRoute = nnExhaustive;
-      break;
-    case Method.SimulatedAnnealing:
-      getRoute = simulatedAnnealing;
-      break;
-  }
-};
-
-let running = false;
-let currentFrame: number | null;
-
-export const renderRoute = () => {
-  if (running) {
-    running = false;
-    runBtn.innerText = 'Run';
-
-    if (currentFrame) {
-      clearTimeout(currentFrame);
-    }
-
-    return;
-  }
-
-  const iterator = getRoute(points.data);
-
-  running = true;
-  runBtn.innerText = 'Stop';
-
-  const renderFrame = () => {
-    const curr = iterator.next();
-
-    if (curr.value) {
-      bestCost.textContent = `${curr.value.bestCost}`;
-      routeSvg.innerHTML = routeToSvg(points.data, curr.value.route);
-      stats.innerText = Object.entries(curr.value.stats)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join('\n');
-    }
-
-    if (running && !curr.done) {
-      currentFrame = window.setTimeout(renderFrame, 0);
-    } else {
-      running = false;
-      runBtn.innerText = 'Run';
-    }
-  };
-
-  renderFrame();
-};
-
-export const clearRoute = () => {
-  routeSvg.innerHTML = '';
-};
