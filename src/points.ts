@@ -2,18 +2,18 @@ import { pointsToSvg } from './render.js';
 import { routeSvg, pointsSvg } from './ui.js';
 import { Point } from './model.js';
 
-export const points: { data: Point[] } = {
-  data: []
-};
-
-const setPoints = (pts: Point[]) => {
-  points.data = pts;
+/**
+ * Set the current points to render and operate on.
+ *
+ * @param points The x and y specification of the points.
+ */
+const setPoints = (points: Point[]) => {
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
   let maxY = Number.NEGATIVE_INFINITY;
 
-  points.data.forEach(({ x, y }) => {
+  points.forEach(({ x, y }) => {
     maxX = Math.max(maxX, x);
     maxY = Math.max(maxY, y);
     minX = Math.min(minX, x);
@@ -31,13 +31,26 @@ const setPoints = (pts: Point[]) => {
 
   routeSvg.setAttribute('viewBox', `${minX} ${minY} ${maxX} ${maxY}`);
   pointsSvg.setAttribute('viewBox', `${minX} ${minY} ${maxX} ${maxY}`);
+
+  renderPoints(points);
+
+  return points;
 };
 
-export const renderPoints = () => {
-  pointsSvg.innerHTML = pointsToSvg(points.data);
+/**
+ * Render the current points.
+ */
+export const renderPoints = (points: Point[]) => {
+  pointsSvg.innerHTML = pointsToSvg(points);
 };
 
+/**
+ * Load points from a URL.
+ *
+ * @param path A URL to a JSON data file.
+ */
 export const loadPoints = async (path: string) => {
-  const pointsJSON: Point[] = await fetch(path).then(r => r.json());
-  setPoints(pointsJSON);
+  return fetch(path)
+    .then(r => r.json())
+    .then(setPoints);
 };

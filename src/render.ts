@@ -1,5 +1,10 @@
 import { Point } from './model.js';
 
+/**
+ * Render points to a series of SVG circles.
+ *
+ * @param points The points in x and y format.
+ */
 export const pointsToSvg = (points: Point[]) => {
   return points
     .map(
@@ -11,6 +16,12 @@ export const pointsToSvg = (points: Point[]) => {
     .join('');
 };
 
+/**
+ * Render a route to a series of SVG lines.
+ *
+ * @param points The points in x and y format.
+ * @param route The route, an array of point indexes.
+ */
 export const routeToSvg = (points: Point[], route: number[]) => {
   return route
     .map((p, i) => {

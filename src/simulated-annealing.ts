@@ -6,10 +6,23 @@ const INIITAL_TEMP = 100;
 const COOLING_RATE = 0.999999;
 const MIN_TEMP = 1;
 
+/**
+ * Standard SA probability function: Accept all better solutions,
+ * and worse solutions with a probability scaled by delta and time.
+ *
+ * @param temp The current temperature.
+ * @param delta Delta between the candidate's cost and the current best.
+ */
 export const prob = (temp: number, delta: number) => {
   return delta < 0 || Math.exp(-delta / temp) >= Math.random();
 };
 
+/**
+ * Performs an in-place swap of two random points in a route.
+ *
+ * @param result The route to perform the swap on.
+ * @param maxSwapDistance The maximum allowed distance between the two points.
+ */
 export const swapPoints = (result: number[], maxSwapDistance: number) => {
   const swapDistance = Math.ceil(Math.random() * maxSwapDistance);
   const i1 = Math.floor(Math.random() * result.length);
@@ -20,6 +33,14 @@ export const swapPoints = (result: number[], maxSwapDistance: number) => {
   result[i2] = temp;
 };
 
+/**
+ * Produces a new candidate route by randomly altering the original.
+ * The amount that the candidate is modified is scaled by the current
+ * temperature, with higher temperatures producing larger changes.
+ *
+ * @param original The original route.
+ * @param temp The current temperate.
+ */
 export const generateCandidate = (original: number[], temp: number) => {
   // We want to swap more and further points at higher temperatures.
   const scaledTemp = (temp / INIITAL_TEMP) * original.length;
@@ -36,6 +57,11 @@ export const generateCandidate = (original: number[], temp: number) => {
   return result;
 };
 
+/**
+ * Search for an optimum route using simulated annealling.
+ *
+ * @param points The points to visit.
+ */
 export function* simulatedAnnealing(points: Point[]): IterableIterator<Result> {
   let currentTemp = INIITAL_TEMP;
 
@@ -53,10 +79,10 @@ export function* simulatedAnnealing(points: Point[]): IterableIterator<Result> {
       route = candidate;
     }
 
-    yield { route: route, bestCost: energy, stats: { currentTemp } };
+    yield { route, bestCost: energy, stats: { currentTemp } };
 
     currentTemp *= COOLING_RATE;
   }
 
-  yield { route: route, bestCost: energy, stats: { currentTemp } };
+  yield { route, bestCost: energy, stats: { currentTemp } };
 }

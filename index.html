@@ -68,6 +68,10 @@
         font-size: var(--font-size);
       }
 
+      button {
+        padding: 12px;
+      }
+
       .stats {
         white-space: pre;
       }
@@ -80,9 +84,9 @@
     <div class="control">
       <label>Input data:</label>
       <select id="data">
-        <option>/data/points40.json</option>
-        <option>/data/points200.json</option>
-        <option>/data/points500.json</option>
+        <option>data/points40.json</option>
+        <option>data/points200.json</option>
+        <option>data/points500.json</option>
       </select>
 
       <label>Method:</label>
@@ -93,9 +97,7 @@
         <option>Genetic</option>
       </select>
 
-      <div>
-        <button type="button" id="run">Run</button>
-      </div>
+      <button type="button" id="run">Run</button>
 
       <label>Best route cost:</label>
       <span id="bestCost"></span>

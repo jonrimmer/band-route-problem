@@ -1,30 +1,16 @@
 import { selectData, selectMethod, runBtn, bestCost, routeSvg, stats } from './ui.js';
-import { loadPoints, renderPoints, points } from './points.js';
+import { loadPoints } from './points.js';
 import { Method } from './model.js';
 import { nnSimple, nnExhaustive } from './nearest-neighbor.js';
 import { simulatedAnnealing } from './simulated-annealing.js';
 import { routeToSvg } from './render.js';
 import { genetic } from './genetic.js';
-selectData.addEventListener('change', async () => {
-    await loadPoints(selectData.value);
-    renderPoints();
-    clearRoute();
-});
-selectMethod.addEventListener('change', async () => {
-    setMethod(selectMethod.value);
-});
-async function load() {
-    await loadPoints(selectData.value);
-    renderPoints();
-    setMethod(selectMethod.value);
-}
-load();
-runBtn.addEventListener('click', () => {
-    renderRoute();
-});
+let points = Promise.resolve([]);
 let getRoute;
-export const setMethod = (method) => {
-    switch (method) {
+let running = false;
+let currentFrame;
+const loadMethod = () => {
+    switch (selectMethod.value) {
         case Method.NearestNeighbor:
             getRoute = nnSimple;
             break;
@@ -39,9 +25,17 @@ export const setMethod = (method) => {
             break;
     }
 };
-let running = false;
-let currentFrame;
-export const renderRoute = () => {
+selectMethod.addEventListener('change', loadMethod);
+points = loadPoints(selectData.value);
+loadMethod();
+selectData.addEventListener('change', async () => {
+    points = loadPoints(selectData.value);
+    clearRoute();
+});
+runBtn.addEventListener('click', () => {
+    run();
+});
+export const run = async () => {
     if (running) {
         running = false;
         runBtn.innerText = 'Run';
@@ -50,7 +44,8 @@ export const renderRoute = () => {
         }
         return;
     }
-    const iterator = getRoute(points.data);
+    const pts = await points;
+    const iterator = getRoute(pts);
     running = true;
     runBtn.innerText = 'Stop';
     const renderFrame = () => {
@@ -63,10 +58,10 @@ export const renderRoute = () => {
             if (curr.value) {
                 result = curr.value;
             }
-        } while (Date.now() - mark < 62 && !curr.done);
+        } while (Date.now() - mark < 50 && !curr.done);
         if (result) {
             bestCost.textContent = `${result.bestCost}`;
-            routeSvg.innerHTML = routeToSvg(points.data, result.route);
+            routeSvg.innerHTML = routeToSvg(pts, result.route);
             stats.innerText = Object.entries(result.stats)
                 .map(([key, value]) => `${key}: ${value}`)
                 .join('\n');
